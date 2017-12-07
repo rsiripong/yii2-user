@@ -44,9 +44,9 @@ $this->params['breadcrumbs'][] = $this->title;
                     'enableAjaxValidation'   => true,
                     'enableClientValidation' => false,
                 ]); ?>
-
+<?php if(0){?>
                 <?= $form->field($model, 'email') ?>
-
+<?php }?>
                 <?= $form->field($model, 'username') ?>
 
                 <?= $form->field($model, 'new_password')->passwordInput() ?>

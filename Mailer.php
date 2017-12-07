@@ -142,6 +142,7 @@ class Mailer extends Component
      */
     public function sendWelcomeMessage(User $user, Token $token = null, $showPassword = false)
     {
+        
         return $this->sendMessage(
             $user->email,
             $this->getWelcomeSubject(),
@@ -231,10 +232,12 @@ class Mailer extends Component
                 : 'no-reply@example.com';
         }
 
-        return $mailer->compose(['html' => $view, 'text' => 'text/' . $view], $params)
+        $b =  $mailer->compose(['html' => $view, 'text' => 'text/' . $view], $params)
             ->setTo($to)
             ->setFrom($this->sender)
             ->setSubject($subject)
             ->send();
+        echo "test2";
+        return $b;
     }
 }

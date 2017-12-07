@@ -43,7 +43,7 @@ echo GridView::widget([
     'columns' => [
         'username',
         'profile.fullname',
-        'profile.iDDiv.Name_Div',
+        //'profile.iDDiv.Name_Div',
         //'email:email',
         /*
         [
@@ -57,6 +57,7 @@ echo GridView::widget([
         ],
          * 
          */
+        /*
         [
             'attribute' => 'created_at',
             'value' => function ($model) {
@@ -66,6 +67,14 @@ echo GridView::widget([
                     return date('Y-m-d G:i:s', $model->created_at);
                 }
             },
+        ],
+         * 
+         */
+        [
+            'attribute' => 'Token Key',
+            'value'=>function ($model){
+                return $model->auth_key;
+            }
         ],
         [
             'header' => Yii::t('user', 'Confirmation'),

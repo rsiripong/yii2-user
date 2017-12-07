@@ -14,7 +14,7 @@ namespace rsiripong\user\models;
 use rsiripong\user\traits\ModuleTrait;
 use yii\db\ActiveRecord;
 
-use \app\models\Durabledivision;
+//use \app\models\Durabledivision;
 
 /**
  * This is the model class for table "profile".
@@ -37,6 +37,12 @@ class Profile extends ActiveRecord
     use ModuleTrait;
     /** @var \rsiripong\user\Module */
     protected $module;
+    
+    var $CID1;
+    var $CID2;
+    var $CID3;
+    var $CID4;
+    var $CID5;
 
     /** @inheritdoc */
     public function init()
@@ -69,8 +75,21 @@ class Profile extends ActiveRecord
     public function rules()
     {
         return [
+            ['CID1','string', 'max' => 1],
+            ['CID2','string', 'max' => 4],
+            ['CID3','string', 'max' => 5],
+            ['CID4','string', 'max' => 2],
+            ['CID5','string', 'max' => 1],
             'bioString'            => ['bio', 'string'],
-            'timeZoneValidation'   => ['timezone', 'validateTimeZone'],
+            
+            'nameUnique'   => [
+                ['name','surname'],
+                'unique',
+                'targetAttribute' => ['name','surname'],
+                'message' => \Yii::t('user', 'This username has already been taken')
+            ],
+            
+            //'timeZoneValidation'   => ['timezone', 'validateTimeZone'],
             
             //'publicEmailPattern'   => ['public_email', 'email'],
             //'gravatarEmailPattern' => ['gravatar_email', 'email'],
@@ -85,8 +104,13 @@ class Profile extends ActiveRecord
             'gravatarEmailLength'  => ['gravatar_email', 'string', 'max' => 255],
             'locationLength'       => ['location', 'string', 'max' => 255],
             'websiteLength'        => ['website', 'string', 'max' => 255],
-            [['ID_Div','ID_Sec','title','callname','position_name','phone','ext_phone',
-                'mobile_phone','PostCode','TambolCode','AmphurCode','ProvinceCode','address'], 'string']
+            [[
+                //'ID_Div','ID_Sec',
+               // 'SCHLID',
+                'title','callname','position_name','phone','EdulvlID',
+                //'ext_phone',
+                'inNSTDAProject','PostCode','CID','brthdate','age','sex',
+                'mobile_phone','PostCode','TambolCode','AmphurCode','ProvinceCode','address','EdulvlOther'], 'string']
         ];
     }
 
@@ -97,6 +121,7 @@ class Profile extends ActiveRecord
     {
         return [
             'name'           => \Yii::t('user', 'Name'),
+            'fullname'           => \Yii::t('user', 'Name'),
             'surname'           => \Yii::t('user', 'SurName'),
             'public_email'   => \Yii::t('user', 'Email (public)'),
             'gravatar_email' => \Yii::t('user', 'Gravatar email'),
@@ -111,7 +136,7 @@ class Profile extends ActiveRecord
             'callname'       => \Yii::t('user', 'Callname'),
             'phone'       => \Yii::t('user', 'Phone'),
             'address'       => \Yii::t('user', 'Address'),
-            'ext_phone'       => \Yii::t('user', 'Ext Phone'),
+            //'ext_phone'       => \Yii::t('user', 'Ext Phone'),
             'mobile_phone'       => \Yii::t('user', 'Mobile Phone'),
             'position_name'       => \Yii::t('user', 'Position Name'),
             'TambolCode'       => \Yii::t('user', 'Tambol'),
@@ -119,6 +144,13 @@ class Profile extends ActiveRecord
             'ProvinceCode'       => \Yii::t('user', 'Province'),
             'PostCode'       => \Yii::t('user', 'Post Code'),
             'SurName'=> \Yii::t('user', 'SurName'),
+            //'SCHLID'=> \Yii::t('user', 'Schlid'),
+            'CID' => \Yii::t('user', 'CID'),
+            'brthdate' => \Yii::t('user', 'birth date'),
+            'age' => \Yii::t('user', 'age'),
+            'sex' => \Yii::t('user', 'sex'),
+            'inNSTDAProject' => \Yii::t('user', 'in NSTDA Project'),
+            'EDULVLID' => \Yii::t('user', 'Education'),
         ];
     }
 
@@ -178,9 +210,9 @@ class Profile extends ActiveRecord
      */
     public function beforeSave($insert)
     {
-        if ($this->isAttributeChanged('gravatar_email')) {
-            $this->setAttribute('gravatar_id', md5(strtolower(trim($this->getAttribute('gravatar_email')))));
-        }
+        //if ($this->isAttributeChanged('gravatar_email')) {
+        //    $this->setAttribute('gravatar_id', md5(strtolower(trim($this->getAttribute('gravatar_email')))));
+        //}
 
         return parent::beforeSave($insert);
     }
@@ -191,15 +223,15 @@ class Profile extends ActiveRecord
     public static function tableName()
     {
         //return '{{%profile}}';
-        return 'durableuserprofile';
+        return 'userprofile';
     }
     
     public function getFullname(){
         return $this->title.' '.$this->name." ".$this->surname;
     }
     
-     public  function getiDDiv(){
+    // public  function getiDDiv(){
        // return @$this->hasOne(Hospital::className(), ['code' => 'hospital_code']);
-        return @$this->hasOne(Durabledivision::className(), ['ID' => 'ID_Div']);
-    }
+    //    return @$this->hasOne(Durabledivision::className(), ['ID' => 'ID_Div']);
+    //}
 }

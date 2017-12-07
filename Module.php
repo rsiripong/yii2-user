@@ -11,7 +11,9 @@
 
 namespace rsiripong\user;
 
+use yii\filters\AccessControl;
 use yii\base\Module as BaseModule;
+use Yii;
 
 /**
  * This is the main module class for the Yii2-user.
@@ -43,13 +45,13 @@ class Module extends BaseModule
     public $enableGeneratingPassword = false;
 
     /** @var bool Whether user has to confirm his account. */
-    public $enableConfirmation = true;
+    public $enableConfirmation = false;
 
     /** @var bool Whether to allow logging in without confirmation. */
     public $enableUnconfirmedLogin = false;
 
     /** @var bool Whether to enable password recovery. */
-    public $enablePasswordRecovery = true;
+    public $enablePasswordRecovery = false;
 
     /** @var bool Whether user can remove his account */
     public $enableAccountDelete = false;
@@ -98,4 +100,77 @@ class Module extends BaseModule
         'recover/<id:\d+>/<code:[A-Za-z0-9_-]+>' => 'recovery/reset',
         'settings/<action:\w+>'                  => 'settings/<action>'
     ];
+    
+    
+     public function behaviors()
+    {
+        return [
+            'access' => [
+                'class' => AccessControl::className(),
+                'rules' => [
+                    [
+                        'allow'         => true,
+                        'roles'         => ['?'],
+                        'matchCallback' => [$this, 'checkPublicAccess'],
+                    ],
+                    [
+                        'allow'         => true,
+                        'roles'         => ['@'],
+                        'matchCallback' => [$this, 'checkAccess'],
+                    ]
+                ],
+            ],
+        ];
+    }
+
+    /**
+     * Checks access.
+     *
+     * @return bool
+     */
+    public function checkPublicAccess()
+    {
+        if(in_array(Yii::$app->controller->id,array('security','registration','settings'))){
+        
+        return true;
+        }
+        return false;
+        /*
+        $user = \Yii::$app->user->identity;
+
+        if (method_exists($user, 'getIsAdmin')) {
+            return $user->getIsAdmin();
+        } else if ($this->adminPermission) {
+            return $this->adminPermission ? \Yii::$app->user->can($this->adminPermission) : false;
+        } else {
+            return isset($user->username) ? in_array($user->username, $this->admins) : false;
+        }
+         * 
+         */
+    }
+    
+    public function checkAccess()
+    {
+       
+        
+        if(in_array(Yii::$app->controller->id,array('security','registration','settings'))){
+        
+        return true;
+        }
+      
+        $user = \Yii::$app->user->identity;
+
+        if (method_exists($user, 'getIsAdmin')) {
+            return $user->getIsAdmin();
+        } else if ($this->adminPermission) {
+            return $this->adminPermission ? \Yii::$app->user->can($this->adminPermission) : false;
+        } else {
+            return isset($user->username) ? in_array($user->username, $this->admins) : false;
+        }
+        
+    }
+    
+    
+    
+   
 }

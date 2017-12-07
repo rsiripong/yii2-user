@@ -42,6 +42,8 @@ class LoginForm extends Model
     /** @var Finder */
     protected $finder;
 
+    
+    public $reCaptcha;
     /**
      * @param Finder $finder
      * @param array  $config
@@ -66,7 +68,9 @@ class LoginForm extends Model
     public function rules()
     {
         return [
-            'requiredFields' => [['login', 'password'], 'required'],
+            'requiredFields' => [['login', 'password'
+                //,'reCaptcha'
+                ], 'required'],
             'loginTrim' => ['login', 'trim'],
             'passwordValidate' => [
                 'password',
@@ -92,6 +96,9 @@ class LoginForm extends Model
                 }
             ],
             'rememberMe' => ['rememberMe', 'boolean'],
+           // [['reCaptcha'], \himiklab\yii2\recaptcha\ReCaptchaValidator::className()
+           //     ,'secret' => '6Lcosg4TAAAAAGFy172rLJWDcyv6ccfdumIPu2c6'
+            //    ]
         ];
     }
 
@@ -102,11 +109,15 @@ class LoginForm extends Model
      */
     public function login()
     {
+        
+        
         if ($this->validate()) {
             return Yii::$app->getUser()->login($this->user, $this->rememberMe ? $this->module->rememberFor : 0);
+            
         } else {
             return false;
         }
+        
     }
 
     /** @inheritdoc */
@@ -119,8 +130,9 @@ class LoginForm extends Model
     public function beforeValidate()
     {
         if (parent::beforeValidate()) {
+            
             $this->user = $this->finder->findUserByUsernameOrEmail(trim($this->login));
-
+           
             return true;
         } else {
             return false;

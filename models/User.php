@@ -80,7 +80,7 @@ class User extends ActiveRecord implements IdentityInterface
     public static $usernameRegexp = '/^[-a-zA-Z0-9_\.@]+$/';
 
     
- 
+  
          
     /**
      * @return Finder
@@ -212,7 +212,7 @@ class User extends ActiveRecord implements IdentityInterface
         return [
             // username rules
             'usernameRequired' => ['username', 'required', 'on' => ['register', 'create', 'connect', 'update']],
-            'usernameMatch'    => ['username', 'match', 'pattern' => static::$usernameRegexp],
+            //'usernameMatch'    => ['username', 'match', 'pattern' => static::$usernameRegexp],
             'usernameLength'   => ['username', 'string', 'min' => 3, 'max' => 255],
             'usernameUnique'   => [
                 'username',
@@ -222,19 +222,19 @@ class User extends ActiveRecord implements IdentityInterface
             'usernameTrim'     => ['username', 'trim'],
 
             // email rules
-            'emailRequired' => ['email', 'required', 'on' => ['register', 'connect', 'create', 'update']],
-            'emailPattern'  => ['email', 'email'],
+            //'emailRequired' => ['email', 'required', 'on' => ['register', 'connect', 'create', 'update']],
+            //'emailPattern'  => ['email', 'email'],
             'emailLength'   => ['email', 'string', 'max' => 255],
-            'emailUnique'   => [
-                'email',
-                'unique',
-                'message' => \Yii::t('user', 'This email address has already been taken')
-            ],
-            'emailTrim'     => ['email', 'trim'],
+           // 'emailUnique'   => [
+           //     'email',
+            //    'unique',
+            //    'message' => \Yii::t('user', 'This email address has already been taken')
+            //],
+           // 'emailTrim'     => ['email', 'trim'],
 
             // password rules
             'passwordRequired' => ['password', 'required', 'on' => ['register']],
-            'passwordLength'   => ['password', 'string', 'min' => 6, 'max' => 72, 'on' => ['register', 'create']],
+            'passwordLength'   => ['password', 'string', 'min' => 2, 'max' => 72, 'on' => ['register', 'create']],
             
         ];
     }
@@ -265,6 +265,7 @@ class User extends ActiveRecord implements IdentityInterface
             $this->trigger(self::BEFORE_CREATE);
 
             if (!$this->save()) {
+                
                 $transaction->rollBack();
                 return false;
             }
@@ -276,6 +277,7 @@ class User extends ActiveRecord implements IdentityInterface
 
             return true;
         } catch (\Exception $e) {
+            echo "test".$e->getMessage();
             $transaction->rollBack();
             \Yii::warning($e->getMessage());
             return false;
@@ -296,36 +298,56 @@ class User extends ActiveRecord implements IdentityInterface
 
         $transaction = $this->getDb()->beginTransaction();
 
-        try {
+       try {
             $this->confirmed_at = $this->module->enableConfirmation ? null : time();
             $this->password     = $this->module->enableGeneratingPassword ? Password::generate(8) : $this->password;
 
             $this->trigger(self::BEFORE_REGISTER);
             
-
+           
+             
             if (!$this->save()) {
-                
+               //echo "test1";
+                //print_r($this->errors);exit;
                 $transaction->rollBack();
                 return false;
             }
-
+            
+            //exit;
+             
             if ($this->module->enableConfirmation) {
+                
                 /** @var Token $token */
                 $token = \Yii::createObject(['class' => Token::className(), 'type' => Token::TYPE_CONFIRMATION]);
+                
+               
+             
                 $token->link('user', $this);
             }
-
+            
+            
+            if (!$this->module->enableUnconfirmedLogin) {
             $this->mailer->sendWelcomeMessage($this, isset($token) ? $token : null);
+            }
+            //echo "test";
+            //print_r($ret);
+            //     print_r($this->errors);exit;
             $this->trigger(self::AFTER_REGISTER);
 
             $transaction->commit();
+        
 
             return true;
+            
         } catch (\Exception $e) {
+            //echo "test2";
+            //print_r($this->attributes);
+           //print_r($this->errors);exit;
             $transaction->rollBack();
             \Yii::warning($e->getMessage());
             return false;
         }
+             
     }
 
     /**
@@ -512,8 +534,9 @@ class User extends ActiveRecord implements IdentityInterface
            //echo $totalrow;exit;
            $this->id = ($totalrow +1);
              }
-
+            
         return parent::beforeSave($insert);
+        //return true;
     }
 
     /** @inheritdoc */
@@ -524,6 +547,9 @@ class User extends ActiveRecord implements IdentityInterface
             if ($this->_profile == null) {
                 $this->_profile = \Yii::createObject(Profile::className());
             }
+            
+             $this->_profile->load(\Yii::$app->request->post());/// save profile
+             
             $this->_profile->link('user', $this);
         }
     }
@@ -532,7 +558,7 @@ class User extends ActiveRecord implements IdentityInterface
     public static function tableName()
     {
         //return '{{%user}}';
-        return 'durableuser';
+        return 'user';
     }
 
     /** @inheritdoc */
@@ -544,8 +570,14 @@ class User extends ActiveRecord implements IdentityInterface
     /** @inheritdoc */
     public static function findIdentityByAccessToken($token, $type = null)
     {
-        throw new NotSupportedException('Method "' . __CLASS__ . '::' . __METHOD__ . '" is not implemented.');
+        
+        return static::findOne(['auth_key' => $token]);
+        //throw new NotSupportedException('Method "' . __CLASS__ . '::' . __METHOD__ . '" is not implemented.');
     }
     
+   
+    public function isRoot(){
+        return true;
+    }
     
 }

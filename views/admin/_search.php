@@ -8,12 +8,12 @@
 
 use yii\helpers\Html;
 use yii\widgets\ActiveForm;
-use app\models\Durabledivision;
+//use app\models\Durabledivision;
 use yii\helpers\ArrayHelper;
 use yii\helpers\Url;
-use hoppe\datepicker\datepicker;
+use rsiripong\juidatepicker;
 
-$promptMsg = Yii::t('core','Please Select');
+//$promptMsg = Yii::t('core','Please Select');
 ?>
 <div class="durableitem-search">
 
@@ -31,46 +31,19 @@ $promptMsg = Yii::t('core','Please Select');
     
    
                 //$list2 = Durabledivision::model()->findAll();
-                $list2 = Durabledivision::find()->all();
+                //$list2 = Durabledivision::find()->all();
        
         
-        echo $form->field($model, 'ID_Div')->dropDownList(ArrayHelper::map($list2,'ID','NameDiv2'),
-                ['id'=>'ddl-ID_Div','prompt'=>$promptMsg]);
+       // echo $form->field($model, 'ID_Div')->dropDownList(ArrayHelper::map($list2,'ID','NameDiv2'),
+         //       ['id'=>'ddl-ID_Div','prompt'=>$promptMsg]);
     ?>
+	<?php if(0){?>
     <div class="col-md-6">
-    <?php echo $form->field($model, 'AccessTime_Start')->widget(DatePicker::classname(), [
-       'type'          => DatePicker::TYPE_COMPONENT,
-        'template' => '{input}{remove}{picker}',
-    'clientOptions' => [
-        'format' => 'dd/mm/yyyy',
-        'autoclose'   => true,
-     
-    ],
-    'clientEvents' => [
-        "changeDate" => "function(e) {
-    
-        }",
-
-    ]
-    ]); ?>
+    <?php echo $form->field($model, 'AccessTime_Start')->widget(JuiDatePicker::classname()); ?>
         </div><div class="col-md-6">
-    <?php echo $form->field($model, 'AccessTime_End')->widget(DatePicker::classname(), [
-       'type'          => DatePicker::TYPE_COMPONENT,
-        'template' => '{input}{remove}{picker}',
-    'clientOptions' => [
-        
-        'format' => 'dd/mm/yyyy',
-        'autoclose'   => true,
-    ],
-    'clientEvents' => [
-        "changeDate" => "function(e) {
-    //        document.location.href = '".Url::to(['/site/index'])."?from_date=' + e.format();
-        //alert(e.format());
-        }",
-
-    ]
-    ]); ?>
+    <?php echo $form->field($model, 'AccessTime_End')->widget(JuiDatePicker::classname()); ?>
     </div>
+	<?php }?>
     <?php 
     //echo $form->field($model, 'ID_Div')->dropDownList($items); 
     // Yii::$app->glib->dropdownDiv($form,$model);

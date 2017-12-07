@@ -49,7 +49,7 @@ $this->params['breadcrumbs'][] = $this->title;
                             //'url' => ['/user/admin/update-profile', 'id' => $user->id]
                             'url' => ['/user/admin/updateprofile', 'id' => $user->id]
                         ],
-                        ['label' => Yii::t('user', 'Information'), 'url' => ['/user/admin/info', 'id' => $user->id]],
+                       // ['label' => Yii::t('user', 'Information'), 'url' => ['/user/admin/info', 'id' => $user->id]],
                         [
                             'label' => Yii::t('user', 'Assignments'),
                             'url' => ['/user/admin/assignments', 'id' => $user->id],

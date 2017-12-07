@@ -100,7 +100,7 @@ class UserSearch extends Model
         }
         $query->andFilterWhere(['profile.ID_Div'=>$this->ID_Div ]);
         if(($this->ItemSearch) !=''){
-        $query->andWhere("username+profile.name+profile.surname+profile.callname+profile.public_email like :ItemSearch",array(':ItemSearch'=>'%'.$this->ItemSearch.'%'));
+        $query->andWhere(" concat_ws( '',username,profile.name,profile.surname,profile.callname,profile.public_email) like :ItemSearch",array(':ItemSearch'=>'%'.$this->ItemSearch.'%'));
         }
         
         if($this->Status=='1'){

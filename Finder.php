@@ -137,10 +137,13 @@ class Finder extends Object
      */
     public function findUserByUsernameOrEmail($usernameOrEmail)
     {
+        
         if (filter_var($usernameOrEmail, FILTER_VALIDATE_EMAIL)) {
-            return $this->findUserByEmail($usernameOrEmail);
+            if($this->findUserByEmail($usernameOrEmail)) {
+                return true;
+            }
         }
-
+        //echo $usernameOrEmail;exit;
         return $this->findUserByUsername($usernameOrEmail);
     }
 

@@ -35,7 +35,9 @@ use kartik\widgets\FileInput;
 $promptMsg = \Yii::t('user', 'Please Select');
 ?>
 
-<?php $this->beginContent('@rsiripong/user/views/admin/update.php', ['user' => $user]) ?>
+<?php 
+//$this->beginContent('@rsiripong/user/views/admin/update.php', ['user' => $user])
+        ?>
 
 <?php $form = ActiveForm::begin([
     'layout' => 'horizontal',
@@ -73,9 +75,9 @@ $promptMsg = \Yii::t('user', 'Please Select');
                 <?= $form->field($profile, 'name') ?>
                 <?= $form->field($profile, 'surname') ?>
 
-    
-    
 
+
+ 
 
 
 
@@ -114,7 +116,6 @@ $promptMsg = \Yii::t('user', 'Please Select');
     ])->hiddenInput()
             ->label(null,[ 'class'=>'control-label col-sm-6' ]) ?>
 
-
 <div class="col-sm-12">
     <?php
     //echo $profile->CID;
@@ -125,7 +126,7 @@ $promptMsg = \Yii::t('user', 'Please Select');
     $profile->CID5 = substr($profile->CID, 12,1);
     ?>
     
- <div class="col-sm-2">
+   <div class="col-sm-2">
     <?= $form->field($profile, 'CID1')
             //->textInput(['maxlength' => true,'class'=>'form-control maskcid'])
             ->widget(\yii\widgets\MaskedInput::className(), [
@@ -201,6 +202,7 @@ $this->registerJs($script);
     </div>
 
 
+
      <?= $form->field($profile, 'brthdate',[
           'template'=>'{label}<div class="col-sm-8">{input}{error}{hint}</div>',
          'options'=>[
@@ -209,6 +211,28 @@ $this->registerJs($script);
         ]
      ])->widget(JuiDatePicker::classname())
             ->label(null,[ 'class'=>'control-label col-sm-4' ]) ?>
+
+<?php
+        //famer-brthdate
+        $urlCalAge = Url::to(['/report/callage']);
+$script = <<< JS
+        jQuery("#profile-brthdate").change(function(){
+           
+        brthdate = jQuery(this).val();
+        $.get("$urlCalAge", { brthdate: brthdate },
+  function(data){
+   
+        jQuery("#profile-age").val(data);
+  });
+
+
+   })
+JS;
+
+$this->registerJs($script);        
+        ?>
+
+
  <?= $form->field($profile, 'age',[
       'template'=>'{label}<div class="col-sm-8">{input}{error}{hint}</div>',
         'options'=>[
@@ -230,11 +254,10 @@ $this->registerJs($script);
              //->label(null,[ 'class'=>'control-label col-sm-2' ]) 
              ?>
 
-               
 
 <?php 
  
-  if($profile->EDULVLID == 99  && $profile->EdulvlOther){
+  if($profile->EdulvlID == 99  && $profile->EdulvlOther){
      $displayfiled[0] ="display: inline";
      $displayfiled[1] ="display: none";
      }else{
@@ -250,10 +273,10 @@ $this->registerJs($script);
          ]);
  
  
- $emedulvl = ArrayHelper::map(Emedulvl::find()->all(),'EDULVLID','EDULVLNAME');
+ $emedulvl = ArrayHelper::map(Emedulvl::find()->all(),'EdulvlID','EDULVLNAME');
        $emedulvl[99] = "อื่นๆ ระบุ";
        
-        echo $form->field($profile, 'EDULVLID',[
+        echo $form->field($profile, 'EdulvlID',[
             'template' => '{label}{beginWrapper}{input}'.$other.'{error}{hint}{endWrapper}',
            'inputOptions' => ['style'=>$displayfiled[1]]
         ])->dropDownList(
@@ -284,7 +307,8 @@ $script = <<< JS
 JS;
 
 $this->registerJs($script);
-?>   
+?> 
+                
                 <?= $form->field($profile, 'position_name') ?>
         
                 <?php 
@@ -327,7 +351,7 @@ $this->registerJs($script);
                 <?= $form->field($profile, 'mobile_phone')->widget(\yii\widgets\MaskedInput::className(), ['mask' => '999-999-9999',]) ?>
                 
                 
-                
+               
                  <?= $form->field($profile, 'address')->textarea() ?>
                 
                 
@@ -386,14 +410,14 @@ $this->registerJs($script);
 <?php echo  $form->field($profile, 'inNSTDAProject')
             ->inline()
              ->radioList(['1'=>'พื้นที่เข้าร่วมโครงการกับ สวทช.','2'=>'ไม่ใช่พื้นที่เข้าร่วมโครงการกับ สวทช.'],['class'=>'radio-inline'])
-        //->label(null,[ 'class'=>'control-label col-sm-4' ])
+        ->label(null,[ 'class'=>'control-label col-sm-2' ])
              //->label(null,[ 'class'=>'control-label col-sm-2' ]) 
-             ?>    
+             ?>     
 
 
 <?php if(0){?>
-<?= $form->field($profile, 'public_email') ?>
- <?= $form->field($profile, 'callname') ?>
+<?= $form->field($profile, 'callname') ?>
+ <?= $form->field($profile, 'public_email') ?>
 <?= $form->field($profile, 'website') ?>
 <?= $form->field($profile, 'location') ?>
 <?= $form->field($profile, 'gravatar_email') ?>
@@ -408,4 +432,7 @@ $this->registerJs($script);
 
 <?php ActiveForm::end(); ?>
 
-<?php $this->endContent() ?>
+<?php 
+//$this->endContent()
+        
+        ?>

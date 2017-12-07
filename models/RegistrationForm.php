@@ -39,7 +39,11 @@ class RegistrationForm extends Model
     public $password;
     public $password_repeat;
     
-    public $captcha;
+    //public $captcha;
+    
+    public $user_id;
+    
+     public $reCaptcha;
         /**
          * @inheritdoc
          */
@@ -56,7 +60,7 @@ class RegistrationForm extends Model
             // username rules
             'usernameLength'   => ['username', 'string', 'min' => 3, 'max' => 255],
             'usernameTrim'     => ['username', 'filter', 'filter' => 'trim'],
-            'usernamePattern'  => ['username', 'match', 'pattern' => $user::$usernameRegexp],
+            //'usernamePattern'  => ['username', 'match', 'pattern' => $user::$usernameRegexp],
             'usernameRequired' => ['username', 'required'],
             'usernameUnique'   => [
                 'username',
@@ -66,7 +70,7 @@ class RegistrationForm extends Model
             ],
             // email rules
             'emailTrim'     => ['email', 'filter', 'filter' => 'trim'],
-            'emailRequired' => ['email', 'required'],
+            //'emailRequired' => ['email', 'required'],
             'emailPattern'  => ['email', 'email'],
             'emailUnique'   => [
                 'email',
@@ -76,11 +80,16 @@ class RegistrationForm extends Model
             ],
             // password rules
             'passwordRequired' => ['password', 'required', 'skipOnEmpty' => $this->module->enableGeneratingPassword],
-            'passwordLength'   => ['password', 'string', 'min' => 6, 'max' => 72],
+            'passwordLength'   => ['password', 'string', 'min' => 4, 'max' => 72],
             ['password_repeat', 'required'],
             ['password_repeat', 'compare', 'compareAttribute'=>'password', 'skipOnEmpty' => false,'message'=>"Passwords don't match" ],
-            ['captcha', 'required'],
-            ['captcha', 'captcha']
+           
+            
+           // ['captcha', 'required'],
+            //['captcha', 'captcha']
+            [['reCaptcha'], \himiklab\yii2\recaptcha\ReCaptchaValidator::className()
+                ,'secret' => '6Lcosg4TAAAAAGFy172rLJWDcyv6ccfdumIPu2c6'
+                ]
         ];
     }
 
@@ -93,6 +102,7 @@ class RegistrationForm extends Model
             'email'    => Yii::t('user', 'Email'),
             'username' => Yii::t('user', 'Username'),
             'password' => Yii::t('user', 'Password'),
+            'password_repeat' => Yii::t('user', 'Password Repeat'),
         ];
     }
 
@@ -111,20 +121,28 @@ class RegistrationForm extends Model
      */
     public function register()
     {
-      /* 
+      /*
         if (!$this->validate()) {
+            //print_r($this->errors);
+            //exit;
             return false;
+            
         }
- */
+       * 
+       */
+ 
         /** @var User $user */
         $user = Yii::createObject(User::className());
         $user->setScenario('register');
         $this->loadAttributes($user);
 
         if (!$user->register()) {
+         //  print_r($user->errors);
+           // exit;
             return false;
         }
-
+        $this->user_id = $user->id;
+        
         Yii::$app->session->setFlash(
             'info',
             Yii::t(

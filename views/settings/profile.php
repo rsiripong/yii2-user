@@ -10,15 +10,15 @@
  */
 
 use yii\helpers\Html;
-use app\models\Durablesection;
-use app\models\Durabledivision;
+//use app\models\Durablesection;
+//use app\models\Durabledivision;
 use yii\helpers\ArrayHelper;
 use kartik\widgets\DepDrop;
 use yii\helpers\Url;
 use kartik\widgets\Typeahead;
-use app\models\Durabletbprovince;
-use app\models\Durabletbamphur;
-use app\models\Durabletbtambol;
+use app\models\Province;
+use app\models\Amphur;
+use app\models\Tambol;
 /**
  * @var yii\web\View $this
  * @var yii\widgets\ActiveForm $form
@@ -42,6 +42,20 @@ $promptMsg = Yii::t('core','Please Select');
                 <?= Html::encode($this->title) ?>
             </div>
             <div class="panel-body">
+                <?php
+                
+                echo $this->render('_profile', [
+                    
+                    'profile' => $model,
+                        
+                        'profileinitialPreview'=>$profileinitialPreview,
+          'profileinitialPreviewConfig'=>$profileinitialPreviewConfig,
+            
+            'filepluginOptions'=>[]
+                        ])
+                
+                ?>
+                <?php if(0){ ?>
                 <?php $form = \yii\widgets\ActiveForm::begin([
                     'id' => 'profile-form',
                     'options' => ['class' => 'form-horizontal'],
@@ -83,35 +97,35 @@ $promptMsg = Yii::t('core','Please Select');
         
                 <?php 
     
-                $list2 = Durabledivision::find()->all();
+              //  $list2 = Durabledivision::find()->all();
         
         
-        echo $form->field($model, 'ID_Div')->dropDownList(
-                ArrayHelper::map($list2,'ID','NameDiv2'),
-                ['id'=>'ddl-ID_Div',
-                    'prompt'=>$promptMsg ]);
+       // echo $form->field($model, 'ID_Div')->dropDownList(
+        //        ArrayHelper::map($list2,'ID','NameDiv2'),
+       //         ['id'=>'ddl-ID_Div',
+         //           'prompt'=>$promptMsg ]);
     ?>
     
      <?php 
     
-     echo $form->field($model, 'ID_Sec')->widget(DepDrop::classname(), [
+     //echo $form->field($model, 'ID_Sec')->widget(DepDrop::classname(), [
            
-            'options'=>['id'=>'ddl-ID_Sec', 'prompt'=>$promptMsg],
-            'data'=> ArrayHelper::map(Durablesection::find()
-                    ->where("ID_DIV=:ID_DIV",[':ID_DIV'=>$model->ID_Div])
-                    ->all(),"ID","NameSec2"),
-            'pluginOptions'=>[
-                'depends'=>['ddl-ID_Div'],
-                'placeholder'=>$promptMsg,
-                'url'=>Url::to(['/durablegroup/dynamicsection'])
+      //      'options'=>['id'=>'ddl-ID_Sec', 'prompt'=>$promptMsg],
+     //       'data'=> ArrayHelper::map(Durablesection::find()
+     //               ->where("ID_DIV=:ID_DIV",[':ID_DIV'=>$model->ID_Div])
+     //               ->all(),"ID","NameSec2"),
+     //       'pluginOptions'=>[
+     //           'depends'=>['ddl-ID_Div'],
+     //           'placeholder'=>$promptMsg,
+     //           'url'=>Url::to(['/durablegroup/dynamicsection'])
             
              
-            ]
-        ]);
+     //       ]
+     //   ]);
    
     ?>
                 <?= $form->field($model, 'phone') ?>
-                <?= $form->field($model, 'ext_phone') ?>
+                <?php //echo $form->field($model, 'ext_phone') ?>
                 <?= $form->field($model, 'mobile_phone') ?>
                 
                 
@@ -121,7 +135,7 @@ $promptMsg = Yii::t('core','Please Select');
                 
                  <?php 
    
-                $list2 = Durabletbprovince::find()->all();
+                $list2 = Province::find()->all();
         
         
         echo $form->field($model, 'ProvinceCode')->dropDownList(
@@ -134,13 +148,13 @@ $promptMsg = Yii::t('core','Please Select');
      echo $form->field($model, 'AmphurCode')->widget(DepDrop::classname(), [
             
             'options'=>['id'=>'ddl-AmphurCode', 'prompt'=>$promptMsg],
-            'data'=> ArrayHelper::map(Durabletbamphur::find()
+            'data'=> ArrayHelper::map(Amphur::find()
                     ->where("ProvinceCode=:ProvinceCode",[':ProvinceCode'=>$model->ProvinceCode])
                     ->all(),"AmphurCode","AmphurName"),
             'pluginOptions'=>[
                 'depends'=>['ddl-ProvinceCode'],
                 'placeholder'=>$promptMsg,
-                'url'=>Url::to(['/durablegroup/dynamicamphur'])
+                'url'=>Url::to(['/emschl/dynamicamphur'])
             
              
             ]
@@ -153,13 +167,13 @@ $promptMsg = Yii::t('core','Please Select');
      echo $form->field($model, 'TambolCode')->widget(DepDrop::classname(), [
             //'type'=>DepDrop::TYPE_SELECT2,
             'options'=>['id'=>'ddl-TambolCode', 'prompt'=>$promptMsg],
-            'data'=> ArrayHelper::map(Durabletbtambol::find()
+            'data'=> ArrayHelper::map(Tambol::find()
                     ->where("AmphurCode=:AmphurCode",[':AmphurCode'=>$model->AmphurCode])
                     ->all(),"TambolCode","TambolName"),
             'pluginOptions'=>[
                 'depends'=>['ddl-AmphurCode'],
                 'placeholder'=>$promptMsg,
-                'url'=>Url::to(['/durablegroup/dynamictambol'])
+                'url'=>Url::to(['/emschl/dynamictambol'])
             
              
             ]
@@ -206,6 +220,8 @@ $promptMsg = Yii::t('core','Please Select');
                 </div>
 
                 <?php \yii\widgets\ActiveForm::end(); ?>
+                
+                <?php } ?>
             </div>
         </div>
     </div>

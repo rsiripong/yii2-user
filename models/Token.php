@@ -106,7 +106,7 @@ class Token extends ActiveRecord
     public static function tableName()
     {
         //return '{{%token}}';
-         return 'durableusertoken';
+         return 'token';
         
     }
 

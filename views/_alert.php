@@ -14,9 +14,10 @@ use yii\bootstrap\Alert;
 /**
  * @var rsiripong\user\Module $module
  */
+
 ?>
 
-<?php if ($module->enableFlashMessages): ?>
+<?php if (0 && $module->enableFlashMessages): ?>
     <div class="row">
         <div class="col-xs-12">
             <?php foreach (Yii::$app->session->getAllFlashes() as $type => $message): ?>
